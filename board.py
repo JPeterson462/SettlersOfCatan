@@ -3,6 +3,7 @@ from tile import *
 class Board:
 	def get_tiles_at(self, vertex):
 		return self.vertices[vertex]
+
 	def __init__(self, tiles):
 		#     A1  A2  A3
 		#   B1  B2  B3  B4
@@ -23,6 +24,7 @@ class Board:
 		self.num_edges = 72
 		self.vertices = []
 		self.edges = []
+		self.neighbors = {}
 		def add_vertex(tiles_touching):
 			self.vertices.append(tiles_touching)
 		def add_edge(v1, v2):
@@ -124,9 +126,6 @@ class Board:
 		add_edge(34, 44)
 		add_edge(36, 46)
 		# row 5
-
-		print("Debug" + str(len(self.vertices)))
-
 		add_vertex([d1])
 		add_vertex([d1, e1])
 		add_vertex([d1, d2, e1])
@@ -163,6 +162,14 @@ class Board:
 		add_edge(51, 52)
 		add_edge(52, 53)
 		# no down edges, bottom side
+		for v in range(self.num_edges):
+			self.neighbors[v] = []
+		for edge in self.edges:
+			start, end = edge
+			self.neighbors[start].append(end)
+			self.neighbors[end].append(start)
+		for v in range(self.num_edges):
+			self.neighbors[v] = list(set((self.neighbors[v])))
 
 def generate_row(types, rolls):
 	print("Types" + types)
