@@ -1,4 +1,8 @@
+from tile import *
+
 class Board:
+	def get_tiles_at(self, vertex):
+		return self.vertices[vertex]
 	def __init__(self, tiles):
 		#     A1  A2  A3
 		#   B1  B2  B3  B4
@@ -10,6 +14,8 @@ class Board:
 		c1, c2, c3, c4, c5 = [tiles[2][i] for i in (0, 1, 2, 3, 4)]
 		d1, d2, d3, d4 = [tiles[3][i] for i in (0, 1, 2, 3)]
 		e1, e2, e3 = [tiles[4][i] for i in (0, 1, 2)]
+		print("D: " + str(d1) + " " + str(d2) + " " + str(d3) + " " + str(d4))
+		print("E: " + str(e1) + " " + str(e2) + " " + str(e3))
 		# Populate a graph of vertices (cities and settlements) and edges (roads) for the standard 3-4 player board
 		# by row, there are 7/9/11/11/9/7 vertices
 		self.num_vertices = 54
@@ -118,6 +124,9 @@ class Board:
 		add_edge(34, 44)
 		add_edge(36, 46)
 		# row 5
+
+		print("Debug" + str(len(self.vertices)))
+
 		add_vertex([d1])
 		add_vertex([d1, e1])
 		add_vertex([d1, d2, e1])
@@ -154,3 +163,20 @@ class Board:
 		add_edge(51, 52)
 		add_edge(52, 53)
 		# no down edges, bottom side
+
+def generate_row(types, rolls):
+	print("Types" + types)
+	tiles = []
+	for i in range(len(types)):
+		tiles.append(Tile(get_tile_type(types[i]), rolls[i]))
+	return tiles
+
+def generate_board(types, rolls):
+	r1 = generate_row(types[0:3], rolls[0:3])
+	r2 = generate_row(types[3:7], rolls[3:7])
+	r3 = generate_row(types[7:12], rolls[7:12])
+	r4 = generate_row(types[12:16], rolls[12:16])
+	r5 = generate_row(types[16:19], rolls[16:19])
+	tiles = [r1, r2, r3, r4, r5]
+	b = Board(tiles)
+	return b
