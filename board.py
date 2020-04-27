@@ -15,8 +15,6 @@ class Board:
 		c1, c2, c3, c4, c5 = [tiles[2][i] for i in (0, 1, 2, 3, 4)]
 		d1, d2, d3, d4 = [tiles[3][i] for i in (0, 1, 2, 3)]
 		e1, e2, e3 = [tiles[4][i] for i in (0, 1, 2)]
-		print("D: " + str(d1) + " " + str(d2) + " " + str(d3) + " " + str(d4))
-		print("E: " + str(e1) + " " + str(e2) + " " + str(e3))
 		# Populate a graph of vertices (cities and settlements) and edges (roads) for the standard 3-4 player board
 		# by row, there are 7/9/11/11/9/7 vertices
 		self.num_vertices = 54
@@ -172,7 +170,6 @@ class Board:
 			self.neighbors[v] = list(set((self.neighbors[v])))
 
 def generate_row(types, rolls):
-	print("Types" + types)
 	tiles = []
 	for i in range(len(types)):
 		tiles.append(Tile(get_tile_type(types[i]), rolls[i]))

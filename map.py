@@ -25,17 +25,18 @@ class Map:
 		connected = False
 		for n in neighbors:
 			e = (min(n, vertex), max(n, vertex))
-			if self.edges[e] != None && self.edges[e].color == color:
+			if self.edges[e] != None and self.edges[e].color == color:
 				connected = True
-		connected = connected || !is_connected
+		connected = connected or not is_connected
 		# cities must replace existing settlements, settlements must replace blanks
 		existing = False
 		if is_city:
-			existing = self.vertices[vertex] != None && self.vertices[vertex].color == color
+			existing = self.vertices[vertex] != None and self.vertices[vertex].color == color
 		else:
 			existing = self.vertices[vertex] == None
-		existing = existing || !is_city
-		return distance && connected && existing
+		just_settlement = distance and connected
+		city_override = is_city or just_settlement
+		return city_override and existing
 
 	def place_road(self, side1, side2, color):
 		self.edges[(min(side1, side2), max(side1, side2))] = Road(color)
@@ -52,18 +53,18 @@ class Map:
 			color_on_end = self.vertices[max(side1, side2)].color
 		for n1 in neighbors1:
 			e1 = (min(min(side1, side2), n1), max(min(side1, side2), n1))
-			if self.edges[e1] != None && self.edges[e1].color == color:
+			if self.edges[e1] != None and self.edges[e1].color == color:
 				connected = True
 		for n2 in neighbors2:
 			e2 = (min(max(side1, side2), n2), max(max(side1, side2), n2))
-			if self.edges[e2] != None && self.edges[e2].color == color:
+			if self.edges[e2] != None and self.edges[e2].color == color:
 				connected = True
-		connected = connected || color_on_end == color
+		connected = connected or color_on_end == color
 		# no edge existing
 		no_existing = False
 		road = self.edges[(min(side1, side2), max(side1, side2))]
 		no_existing = road == None
-		return connected && no_existing
+		return connected and no_existing
 
 	def place_knight(self, vertices):
 		self.knight_vertices = vertices
