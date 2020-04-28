@@ -10,3 +10,4 @@ class Hand:
 		self.num_road_building = 0
 		self.num_year_of_plenty = 0
 		self.num_monopoly = 0
+		self.num_knights_played = 0

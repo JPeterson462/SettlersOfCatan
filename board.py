@@ -14,6 +14,17 @@ class Board:
 					resources.append(t.type)
 		return (for_roll, resources)
 
+	def get_vertices_for_tile(self, type_r, roll):
+		for_roll = []
+		for v in range(self.num_vertices):
+			used = False
+			for t in self.vertices[v]:
+				if t.roll == roll and t.type == type_r:
+					used = True
+			if used:
+				for_roll.append(v)
+		return for_roll
+
 	def __init__(self, tiles):
 		#     A1  A2  A3
 		#   B1  B2  B3  B4
