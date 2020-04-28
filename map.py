@@ -38,6 +38,23 @@ class Map:
 		city_override = is_city or just_settlement
 		return city_override and existing
 
+	def get_road(self, side1, side2):
+		return self.edges[(min(side1, side2), max(side1, side2))]
+
+	def get_neighboring_edges(self, side1, side2):
+		neighboring = []
+		for edge in self.edges.keys():
+			side3, side4 = edge
+			if side1 == side3 and side2 != side4:
+				neighboring.append(edge)
+			if side1 == side4 and side2 != side3:
+				neighboring.append(edge)
+			if side2 == side3 and side1 != side4:
+				neighboring.append(edge)
+			if side2 == side4 and side1 != side3:
+				neighboring.append(edge)
+		return neighboring
+
 	def place_road(self, side1, side2, color):
 		self.edges[(min(side1, side2), max(side1, side2))] = Road(color)
 

@@ -9,22 +9,96 @@ class GameController:
 				largest_army = False
 		return largest_army
 
-	def has_longest_road(self, color):
-		# TODO
-		pass
+	def find_longest_path_length(self, start, edges_of_color, possible_ends, visited):
+		def edge_is_neighbor(edge1start, edge1end, edge2start, edge2end):
+			if edge1start == edge2start:
+				return edge1end != edge2end
+			if edge1start == edge2end:
+				return edge1end != edge2start
+			if edge1end == edge2start:
+				return edge1start != edge2end
+			if edge1end == edge2end:
+				return edge1start != edge2start
+		start1, start2 = start
+		length = 1
+		if start in possible_ends and not start in visited:
+			return 1
+		for edge in edges_of_color:
+			if edge in visited:
+				continue
+			edge1, edge2 = edge
+			if not edge_is_neighbor(start1, start2, edge1, edge2):
+				continue
+			visited2 = visited.copy()
+			visited2.append(edge)
+			t_length = self.find_longest_path_length(edge, edges_of_color, possible_ends, visited2)
+			length = max(length, 1 + t_length)
+		return length
 
-	def count_victory_points(self, hand, color, other_hands):
+	def find_longest_road(self, color):
+		# 1. Find all possible ends of a path
+		#    Ends either have a noncolored road or a noncolored settlement
+		edges_of_color = []
+		possible_ends = []
+		for edge in self.map.edges.keys():
+			side1, side2 = edge
+			is_end = False
+			road = self.map.get_road(side1, side2)
+			if road == None:
+				continue
+			if road.color == color:
+				edges_of_color.append(edge)
+				settlement1 = self.map.vertices[side1]
+				settlement2 = self.map.vertices[side2]
+				if settlement1 == None:
+					if settlement2 != None and settlement2.color != color:
+						is_end = True
+				if settlement2 == None:
+					if settlement1 != None and settlement1.color != color:
+						is_end = True
+				neighboring = self.map.get_neighboring_edges(side1, side2)
+				for next_edge in neighboring:
+					side3, side4 = next_edge
+					next_road = self.map.get_road(side3, side4)
+					if next_road == None or next_road.color != color:
+						is_end = True
+			if is_end:
+				possible_ends.append(edge)
+		# 2. From each end, branch out until another end
+		#    Don't traverse visited edges again
+		longest_routes = []
+		for start in possible_ends:
+			longest_routes.append(self.find_longest_path_length(start, edges_of_color, possible_ends, [start]))
+		longest = 0
+		for length in longest_routes:
+			if length > longest:
+				longest = length
+		return longest
+
+	def has_longest_road(self, color, other_colors):
+		longest_road = self.find_longest_road(color)
+		print("DEBUG -- Longest Road: " + str(longest_road))
+		if longest_road < 5:
+			return False
+		for other_color in other_colors:
+			if self.get_longest_road(other_color) > longest_road:
+				return False
+		return True
+
+	def count_victory_points(self, hand, color, other_hands, other_colors):
 		vp = 0
 		# Settlements/Cities
 		for v in range(self.map.board.num_vertices):
 			settlement = self.map.vertices[v]
+			if settlement == None:
+				continue
 			if settlement.color == color:
 				if settlement.is_city:
 					vp += 2
 				else:
 					vp += 1
 		# Longest Road
-		if self.has_longest_road(color):
+		if self.has_longest_road(color, other_colors):
 			vp += 2
 		# Largest Army
 		if self.has_largest_army(hand, color, other_hands):
@@ -168,7 +242,7 @@ class GameController:
 			r = resources[r]
 			s = self.map.vertices[v]
 			if s.color == color:
-				num_to_give = s.is_city ? 2 : 1
+				num_to_give = 2 if s.is_city else 1
 				if r == TileType.MOUNTAINS:
 					hand.num_ore += num_to_give
 				if r == TileType.PASTURE:

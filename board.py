@@ -4,7 +4,7 @@ class Board:
 	def get_tiles_at(self, vertex):
 		return self.vertices[vertex]
 
-	def get_vertices_and_resources_for_roll(self, roll)
+	def get_vertices_and_resources_for_roll(self, roll):
 		for_roll = []
 		resources = []
 		for v in range(self.num_vertices):

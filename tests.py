@@ -2,6 +2,8 @@ from board import *
 from tile import *
 from map import *
 from color import *
+from game_controller import *
+from hand import *
 
 # 0/6 7/15 16/26 27/37 38/46 47/53
 
@@ -79,3 +81,17 @@ if test2:
 			cities_blue += 1
 	print("Placeable Settlements: Red " + str(settlements_red) + ", Orange " + str(settlements_orange) + ", White " + str(settlements_white) + ", Blue " + str(settlements_blue))
 	print("Placeable Cities: Red " + str(cities_red) + ", Orange " + str(cities_orange) + ", White " + str(cities_white) + ", Blue " + str(cities_blue))
+	gc2 = GameController(m2)
+	print("Red's Longest Road")
+	gc2.has_longest_road(Color.RED, [Color.ORANGE, Color.WHITE, Color.BLUE])
+	print("Orange's Longest Road")
+	gc2.has_longest_road(Color.ORANGE, [Color.RED, Color.WHITE, Color.BLUE])
+	print("White's Longest Road")
+	gc2.has_longest_road(Color.WHITE, [Color.ORANGE, Color.RED, Color.BLUE])
+	print("Blue's Longest Road")
+	gc2.has_longest_road(Color.BLUE, [Color.RED, Color.WHITE, Color.ORANGE])
+	blue_hand2 = Hand()
+	orange_hand2 = Hand()
+	white_hand2 = Hand()
+	red_hand2 = Hand()
+	print("Orange VP: " + str(gc2.count_victory_points(red_hand2, Color.RED, [orange_hand2, white_hand2, blue_hand2], [Color.ORANGE, Color.WHITE, Color.BLUE])))
