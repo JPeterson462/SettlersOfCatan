@@ -4,6 +4,16 @@ class Board:
 	def get_tiles_at(self, vertex):
 		return self.vertices[vertex]
 
+	def get_vertices_and_resources_for_roll(self, roll)
+		for_roll = []
+		resources = []
+		for v in range(self.num_vertices):
+			for t in self.vertices[v]:
+				if t.roll == roll:
+					for_roll.append(v)
+					resources.append(t.type)
+		return (for_roll, resources)
+
 	def __init__(self, tiles):
 		#     A1  A2  A3
 		#   B1  B2  B3  B4
