@@ -170,7 +170,8 @@ class GameController:
 		colors = []
 		for v in vertices:
 			settlement = self.map.vertices[v]
-			colors.append(settlement.color)
+			if settlement != None:
+				colors.append(settlement.color)
 		colors = list(set(colors))
 		hand.num_knights -= 1
 		hand.num_knights_played += 1

@@ -19,6 +19,8 @@ class Board:
 		for v in range(self.num_vertices):
 			used = False
 			for t in self.vertices[v]:
+				if t.type == type_r and type_r == TileType.DESERT:
+					used = True
 				if t.roll == roll and t.type == type_r:
 					used = True
 			if used:

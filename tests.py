@@ -95,3 +95,9 @@ if test2:
 	white_hand2 = Hand()
 	red_hand2 = Hand()
 	print("Orange VP: " + str(gc2.count_victory_points(red_hand2, Color.RED, [orange_hand2, white_hand2, blue_hand2], [Color.ORANGE, Color.WHITE, Color.BLUE])))
+	bank_hand2 = Hand()
+	bank_hand2.num_knights = 2
+	gc2.play_knight(bank_hand2, TileType.DESERT, 0)
+	print("Knight Vertices: " + repr(gc2.map.knight_vertices))
+	gc2.play_knight(bank_hand2, TileType.MOUNTAINS, 10)
+	print("Knight Vertices: " + repr(gc2.map.knight_vertices))
