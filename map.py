@@ -2,6 +2,8 @@ from board import *
 from road import *
 from settlement import *
 
+# 0/6 7/15 16/26 27/37 38/46 47/53
+
 class Map:
 	def __init__(self, board):
 		self.board = board
@@ -10,6 +12,31 @@ class Map:
 		for edge in board.edges:
 			self.edges[edge] = None
 		self.knight_vertices = []
+		self.harbors = []
+		self.harbors.append(Harbor(None, 3, [0, 1]))
+		self.harbors.append(Harbor(TileType.FIELDS, 2, [3, 4]))
+		self.harbors.append(Harbor(TileType.MOUNTAINS, 2, [14, 15]))
+		self.harbors.append(Harbor(None, 3, [26, 37]))
+		self.harbors.append(Harbor(TileType.PASTURE, 2, [45, 46]))
+		self.harbors.append(Harbor(None, 3, [50, 51]))
+		self.harbors.append(Harbor(None, 3, [47, 48]))
+		self.harbors.append(Harbor(TileType.FOREST, 2, [7, 17]))
+		self.harbors.append(Harbor(TileType.HILLS, 2, [28, 38]))
+
+	def get_available_harbors(self, color):
+		available = []
+		places = []
+		for i in range(self.board.num_vertices):
+			settlement = self.vertices[i]
+			if settlement != None and settlement.color == color:
+				places.append(i)
+		for harbor in self.harbors:
+			linked = False
+			for v in harbor.vertices:
+				if v in places:
+					linked = True
+			available.append(harbor)
+		return available
 
 	def place_settlement(self, vertex, color, is_city):
 		self.vertices[vertex] = Settlement(color, is_city)

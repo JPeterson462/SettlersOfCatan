@@ -5,6 +5,60 @@ class GameController:
 	def __init__(self, map):
 		self.map = map
 
+	def trade(self, in_res, out_res, ratio, hand, color):
+		def take_n(hand, res, n):
+			if res == TileType.MOUNTAINS:
+				if hand.num_ore < n:
+					return False
+				hand.num_ore += n
+				return True
+			if res == TileType.PASTURE:
+				if hand.num_wool < n:
+					return False
+				hand.num_wool += n
+				return True
+			if res == TypeType.FOREST:
+				if hand.num_lumber < n:
+					return False
+				hand.num_lumber += n
+				return True
+			if res == TileType.FIELDS:
+				if hand.num_wheat < n:
+					return False
+				hand.num_wheat += n
+				return True
+			if res == TileType.HILLS:
+				if hand.num_brick < n:
+					return False
+				hand.num_brick += n
+				return True
+			return False
+		harbors = self.map.get_available_harbors(color)
+		if ratio == 4:
+			if take_n(hand, in_res, -4):
+				take_n(hand, out_res, 1)
+				return True
+			return False
+		if ratio == 3:
+			has_3 = False
+			for harbor in harbors:
+				if harbor.ratio == 3:
+					has_3 = True
+			if take_n(hand, in_res, -3):
+				take_n(hand, out_res, 1)
+				return True
+			return False
+		if ratio == 2:
+			has_2 = False
+			for harbor in harbors:
+				if harbor.resource == in_res:
+					has_2 = True
+			if take_n(hand, in_res, -2):
+				take_n(hand, out_res, 1)
+				return True
+			return False
+		return False
+
 	def has_largest_army(self, hand, color, other_hands):
 		largest_army = hand.num_knights_played > 2
 		for other_hand in other_hands:
