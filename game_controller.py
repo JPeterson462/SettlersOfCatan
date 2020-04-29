@@ -5,63 +5,82 @@ class GameController:
 	def __init__(self, map):
 		self.map = map
 
-	def trade_players(self):
-		# TODO
-		pass
+	def take_n(self, hand, res, n):
+		if res == TileType.MOUNTAINS:
+			if hand.num_ore < n:
+				return None
+			hand.num_ore -= n
+			return hand
+		if res == TileType.PASTURE:
+			if hand.num_wool < n:
+				return None
+			hand.num_wool -= n
+			return hand
+		if res == TileType.FOREST:
+			if hand.num_lumber < n:
+				return None
+			hand.num_lumber -= n
+			return hand
+		if res == TileType.FIELDS:
+			if hand.num_wheat < n:
+				return None
+			hand.num_wheat -= n
+			return hand
+		if res == TileType.HILLS:
+			if hand.num_brick < n:
+				return None
+			hand.num_brick -= n
+			return hand
+		return None
+
+	def trade_players(self, in_res, in_ratio, out_res, out_ratio, in_hand, out_hand):
+		def do_trade(_in_res, _in_ratio, _out_res, _out_ratio, _in_hand, _out_hand):
+			in_hand_tmp = _in_hand.copy()
+			out_hand_tmp = _out_hand.copy()
+			for i in range(len(_in_res)):
+				in_hand_tmp = self.take_n(in_hand_tmp, _in_res[i], _in_ratio[i])
+				out_hand_tmp = self.take_n(out_hand_tmp, _in_res[i], _in_ratio[i] * -1)
+				if in_hand_tmp == None or out_hand_tmp == None:
+					print("Trade " + str(i) + " failed... " + repr(in_hand_tmp) + " " + repr(out_hand_tmp))
+					return None
+			for i in range(len(_out_res)):
+				out_hand_tmp = self.take_n(out_hand_tmp, _out_res[i], _out_ratio[i])
+				in_hand_tmp = self.take_n(in_hand_tmp, _out_res[i], _out_ratio[i] * -1)
+				if in_hand_tmp == None or out_hand_tmp == None:
+					return None
+			return (in_hand_tmp, out_hand_tmp)
+		in_hand_copy = in_hand.copy()
+		out_hand_copy = out_hand.copy()
+		if do_trade(in_res, in_ratio, out_res, out_ratio, in_hand_copy, out_hand_copy) != None:
+			return do_trade(in_res, in_ratio, out_res, out_ratio, in_hand, out_hand)
+		return None
 
 	def trade(self, in_res, out_res, ratio, hand, color):
-		def take_n(hand, res, n):
-			if res == TileType.MOUNTAINS:
-				if hand.num_ore < n:
-					return False
-				hand.num_ore += n
-				return True
-			if res == TileType.PASTURE:
-				if hand.num_wool < n:
-					return False
-				hand.num_wool += n
-				return True
-			if res == TileType.FOREST:
-				if hand.num_lumber < n:
-					return False
-				hand.num_lumber += n
-				return True
-			if res == TileType.FIELDS:
-				if hand.num_wheat < n:
-					return False
-				hand.num_wheat += n
-				return True
-			if res == TileType.HILLS:
-				if hand.num_brick < n:
-					return False
-				hand.num_brick += n
-				return True
-			return False
 		harbors = self.map.get_available_harbors(color)
 		if ratio == 4:
-			if take_n(hand, in_res, -4):
-				take_n(hand, out_res, 1)
-				return True
-			return False
+			if self.take_n(hand, in_res, 4):
+				self.take_n(hand, out_res, -1)
+				return hand
+			return None
 		if ratio == 3:
 			has_3 = False
 			for harbor in harbors:
 				if harbor.ratio == 3:
 					has_3 = True
-			if take_n(hand, in_res, -3):
-				take_n(hand, out_res, 1)
-				return True
-			return False
+			if self.take_n(hand, in_res, 3):
+				self.take_n(hand, out_res, -1)
+				return hand
+			return None
 		if ratio == 2:
 			has_2 = False
 			for harbor in harbors:
 				if harbor.resource == in_res:
 					has_2 = True
-			if take_n(hand, in_res, -2):
-				take_n(hand, out_res, 1)
-				return True
-			return False
-		return False
+			if self.take_n(hand, in_res, 2):
+				self.take_n(hand, out_res, -1)
+				return hand
+			return None
+		return None
 
 	def has_largest_army(self, hand, color, other_hands):
 		largest_army = hand.num_knights_played > 2

@@ -108,9 +108,16 @@ if test2:
 	red_hand2.num_wheat += 1
 	red_hand2.num_wool += 1
 	white_hand2.num_wool += 5
-	gc2.trade(TileType.PASTURE, TileType.HILLS, 4, white_hand2, Color.WHITE)
+	white_hand2 = gc2.trade(TileType.PASTURE, TileType.HILLS, 4, white_hand2, Color.WHITE)
+	#def trade_players(self, in_res, in_ratio, out_res, out_ratio, in_hand, out_hand):
 	gc2.buy_development_card(deck2, red_hand2)
 	gc2.collect_resources_all(6, [red_hand2, orange_hand2, white_hand2, blue_hand2], [Color.RED, Color.ORANGE, Color.WHITE, Color.BLUE])
+	print("Red: " + repr(red_hand2))
+	print("Orange: " + repr(orange_hand2))
+	print("White: " + repr(white_hand2))
+	print("Blue: " + repr(blue_hand2))
+	print("Trade brick and wool for wheat...")
+	orange_hand2, white_hand2 = gc2.trade_players([TileType.FIELDS], [1], [TileType.HILLS, TileType.PASTURE], [1, 1], orange_hand2, white_hand2)
 	print("Red: " + repr(red_hand2))
 	print("Orange: " + repr(orange_hand2))
 	print("White: " + repr(white_hand2))
