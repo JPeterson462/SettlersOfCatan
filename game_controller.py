@@ -1,3 +1,6 @@
+from development_card import *
+from tile import *
+
 class GameController:
 	def __init__(self, map):
 		self.map = map
@@ -235,14 +238,14 @@ class GameController:
 		return True
 
 	def collect_resources(self, roll, hand, color):
-		vertices, resources = self.map.get_vertices_and_resources_for_roll(roll)
+		vertices, resources = self.map.board.get_vertices_and_resources_for_roll(roll)
 		for i in range(len(vertices)):
 			v = vertices[i]
 			if v in self.map.knight_vertices:
 				continue
-			r = resources[r]
+			r = resources[i]
 			s = self.map.vertices[v]
-			if s.color == color:
+			if s != None and s.color == color:
 				num_to_give = 2 if s.is_city else 1
 				if r == TileType.MOUNTAINS:
 					hand.num_ore += num_to_give
@@ -255,3 +258,7 @@ class GameController:
 				if r == TileType.HILLS:
 					hand.num_brick += num_to_give
 		return True
+
+	def collect_resources_all(self, roll, hands, colors):
+		for i in range(len(hands)):
+			self.collect_resources(roll, hands[i], colors[i])

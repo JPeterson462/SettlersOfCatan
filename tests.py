@@ -4,6 +4,7 @@ from map import *
 from color import *
 from game_controller import *
 from hand import *
+from development_card import *
 
 # 0/6 7/15 16/26 27/37 38/46 47/53
 
@@ -101,3 +102,14 @@ if test2:
 	print("Knight Vertices: " + repr(gc2.map.knight_vertices))
 	gc2.play_knight(bank_hand2, TileType.MOUNTAINS, 10)
 	print("Knight Vertices: " + repr(gc2.map.knight_vertices))
+	deck2 = DevelopmentCardDeck()
+	# 6 Brick
+	red_hand2.num_ore += 1
+	red_hand2.num_wheat += 1
+	red_hand2.num_wool += 1
+	gc2.buy_development_card(deck2, red_hand2)
+	gc2.collect_resources_all(6, [red_hand2, orange_hand2, white_hand2, blue_hand2], [Color.RED, Color.ORANGE, Color.WHITE, Color.BLUE])
+	print("Red: " + repr(red_hand2))
+	print("Orange: " + repr(orange_hand2))
+	print("White: " + repr(white_hand2))
+	print("Blue: " + repr(blue_hand2))
