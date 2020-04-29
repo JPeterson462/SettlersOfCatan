@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Catan Board Canvas</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<style type="text/css">
+
+		</style>
+		<!-- Sea: #09a0db, Desert: #d4d66b, Hills: #b8250f, Forest: #0a5404, Pasture: #86cc0c, Mountains: #616375, Fields: #e2f511 -->
+		<canvas id="board" width="800" height="800">			
+		</canvas>
+		<script type="text/javascript">
+			var TILE_SIZE = 160;
+			var offsety = TILE_SIZE / 2 * (1 - Math.cos(Math.PI / 6));
+			var TILE_HEIGHT = 160 - offsety * 2;
+			function toRadians(degrees) {
+				var pi = Math.PI;
+				return degrees * (pi / 180);
+			}
+			function getPoint(centerx, centery, radius, angle) {
+				angle = toRadians(angle);
+				var point = [ centerx + Math.sin(angle) * radius, centery + Math.cos(angle) * radius ];
+				return point;
+			}
+			function getHalfwayPoint(centerx, centery, radius, angle1, angle2) {
+				var point1 = getPoint(centerx, centery, radius, angle1);
+				var point2 = getPoint(centerx, centery, radius, angle2);
+				var point = [ (point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2 ];
+				return point;
+			}
+			function drawRectAround(ctx, point, width, height) {
+				ctx.strokeRect(point[0] - width / 2, point[1] - height / 2, width, height);
+			}
+			function getFill(type) {
+				if (type == "desert") {
+					return "#d4d66b";
+				}
+				if (type == "hills") {
+					return "#b8250f";
+				}
+				if (type == "forest") {
+					return "#0a5404";
+				}
+				if (type == "pasture") {
+					return "#86cc0c";
+				}
+				if (type == "mountains") {
+					return "#616375";
+				}
+				if (type == "fields") {
+					return "#e2f511";
+				}
+				return "";
+			}
+			function drawHex(ctx, x, y, size, type, roll) {
+				ctx.strokeStyle = "#000";
+				ctx.fillStyle = getFill(type);
+				ctx.beginPath();
+				var radius = size / 2;
+				var centerx = x + radius;
+				var centery = y + radius;
+				var offset = 0;
+				var start = getPoint(centerx, centery, radius, offset);
+				ctx.moveTo(start[0], start[1]);
+				for (var i = offset + 60; i < 360; i += 60) {
+					var point = getPoint(centerx, centery, radius, i);
+					ctx.lineTo(point[0], point[1]);
+				}				
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+				ctx.fillStyle = "#000";
+				// for (var i = offset; i < 360; i += 60) {
+				// 	drawRectAround(ctx, getPoint(centerx, centery, radius, i), 15, 15);
+				// 	drawRectAround(ctx, getHalfwayPoint(centerx, centery, radius, i, i + 60), 15, 15);
+				// }
+				ctx.textAlign = "center";
+				ctx.font = "32px Arial";
+				if (roll == 6 || roll == 8) {
+					ctx.fillStyle = "red";
+				} else {
+					ctx.fillStyle = "black";
+				}
+				if (roll != 7) {
+					ctx.fillText(roll.toString(), x + radius, y + radius + 12);
+				}
+				if (roll == 6 || roll == 8) {
+					ctx.fillStyle = "black";
+					ctx.strokeText(roll.toString(), x + radius, y + radius + 12);
+				}
+			}
+			function drawHexGrid(ctx, x, y, size, types, rolls) {
+				drawHex(ctx, x + size, y, size, types[0], rolls[0]);
+				drawHex(ctx, x + size * 2 - offsety * 2, y, size, types[1], rolls[1]);
+				drawHex(ctx, x + size * 3 - offsety * 4, y, size, types[2], rolls[2]);
+				///
+				drawHex(ctx, x + size / 2 + offsety, y + size * 3 / 4, size, types[3], rolls[3]);
+				drawHex(ctx, x + size * 3 / 2 + offsety - offsety * 2, y + size * 3 / 4, size, types[4], rolls[4]);
+				drawHex(ctx, x + size * 5 / 2 + offsety - offsety * 4, y + size * 3 / 4, size, types[5], rolls[5]);
+				drawHex(ctx, x + size * 7 / 2 + offsety - offsety * 6, y + size * 3 / 4, size, types[6], rolls[6]);
+				///
+				drawHex(ctx, x + offsety * 2, y + size * 6 / 4, size, types[7], rolls[7]);
+				drawHex(ctx, x + offsety * 2 + size - offsety * 2, y + size * 6 / 4, size, types[8], rolls[8]);
+				drawHex(ctx, x + offsety * 2 + size * 2 - offsety * 4, y + size * 6 / 4, size, types[9], rolls[9]);
+				drawHex(ctx, x + offsety * 2 + size * 3 - offsety * 6, y + size * 6 / 4, size, types[10], rolls[10]);
+				drawHex(ctx, x + offsety * 2 + size * 4 - offsety * 8, y + size * 6 / 4, size, types[11], rolls[11]);
+				///
+				drawHex(ctx, x + size / 2 + offsety, y + size * 9 / 4, size, types[12], rolls[12]);
+				drawHex(ctx, x + size * 3 / 2 + offsety - offsety * 2, y + size * 9 / 4, size, types[13], rolls[13]);
+				drawHex(ctx, x + size * 5 / 2 + offsety - offsety * 4, y + size * 9 / 4, size, types[14], rolls[14]);
+				drawHex(ctx, x + size * 7 / 2 + offsety - offsety * 6, y + size * 9 / 4, size, types[15], rolls[15]);
+				///
+				drawHex(ctx, x + size, y + size * 12 / 4, size, types[16], rolls[16]);
+				drawHex(ctx, x + size * 2 - offsety * 2, y + size * 12 / 4, size, types[17], rolls[17]);
+				drawHex(ctx, x + size * 3 - offsety * 4, y + size * 12 / 4, size, types[18], rolls[18]);
+			}
+			var canvas = document.getElementById("board");
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = "#09a0db";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			//drawHex(ctx, 10 + 0, 10 + -offsety, TILE_SIZE, "")
+			drawHexGrid(ctx, 10 + 0, 10 + 0, TILE_SIZE, [
+				"mountains","pasture","forest",
+				"fields","hills","pasture","hills",
+				"fields","forest","desert","forest","mountains",
+				"forest","mountains","fields","pasture",
+				"hills","fields","pasture"
+				], [10, 2, 9, 12, 6, 4, 10, 9, 11, 7, 3, 8, 8, 3, 4, 5, 5, 6, 11])
+			console.log("Offset: " + offsety);
+		</script>
+	</body>
+</html>
