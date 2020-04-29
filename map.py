@@ -1,6 +1,7 @@
 from board import *
 from road import *
 from settlement import *
+from harbor import *
 
 # 0/6 7/15 16/26 27/37 38/46 47/53
 

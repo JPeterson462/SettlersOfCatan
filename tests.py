@@ -107,6 +107,8 @@ if test2:
 	red_hand2.num_ore += 1
 	red_hand2.num_wheat += 1
 	red_hand2.num_wool += 1
+	white_hand2.num_wool += 5
+	gc2.trade(TileType.PASTURE, TileType.HILLS, 4, white_hand2, Color.WHITE)
 	gc2.buy_development_card(deck2, red_hand2)
 	gc2.collect_resources_all(6, [red_hand2, orange_hand2, white_hand2, blue_hand2], [Color.RED, Color.ORANGE, Color.WHITE, Color.BLUE])
 	print("Red: " + repr(red_hand2))

@@ -5,6 +5,10 @@ class GameController:
 	def __init__(self, map):
 		self.map = map
 
+	def trade_players(self):
+		# TODO
+		pass
+
 	def trade(self, in_res, out_res, ratio, hand, color):
 		def take_n(hand, res, n):
 			if res == TileType.MOUNTAINS:
@@ -17,7 +21,7 @@ class GameController:
 					return False
 				hand.num_wool += n
 				return True
-			if res == TypeType.FOREST:
+			if res == TileType.FOREST:
 				if hand.num_lumber < n:
 					return False
 				hand.num_lumber += n
