@@ -13,6 +13,9 @@ class HexMath {
 	static offsety = HexMath.TILE_SIZE / 2 * (1 - Math.cos(Math.PI / 6));
 	static TILE_WIDTH = 160 - HexMath.offsety * 2;
 
+	static SETTLEMENT_RADIUS = 12;
+	static CITY_RADIUS = 20;
+
 	//     3
 	//   4   2
 	//   5   1
@@ -109,7 +112,11 @@ class BoardRenderer {
 		pasture: "86cc0c",
 		mountains: "616375",
 		fields: "e2f511",
-		sea: "09a0db"
+		sea: "09a0db",
+		red: "f00",
+		orange: "ffa500",
+		white: "fff",
+		blue: "00f",
 	};
 
 	static getCenterOfTile(vertices, indices) {
@@ -121,6 +128,44 @@ class BoardRenderer {
 			totaly += point[1];
 		}
 		return [totalx / indices.length, totaly / indices.length];
+	}
+
+	static drawSettlement(vertices, vertex, fill, ctx) {
+		var point = vertices[vertex];
+		ctx.strokeStyle = "#000";
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.fillRect(point[0] - HexMath.SETTLEMENT_RADIUS, point[1] - HexMath.SETTLEMENT_RADIUS, HexMath.SETTLEMENT_RADIUS * 2, HexMath.SETTLEMENT_RADIUS * 2);
+		ctx.strokeRect(point[0] - HexMath.SETTLEMENT_RADIUS, point[1] - HexMath.SETTLEMENT_RADIUS, HexMath.SETTLEMENT_RADIUS * 2, HexMath.SETTLEMENT_RADIUS * 2);
+	}
+
+	static drawCity(vertices, vertex, fill, ctx) {
+		var point = vertices[vertex];
+		var radius = HexMath.CITY_RADIUS;
+		ctx.strokeStyle = "#000";
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.beginPath();
+		var start = HexMath.getPoint(point[0], point[1], radius, 180);
+		ctx.moveTo(start[0], start[1]);
+		for (var angle = 72; angle < 360; angle += 72) {
+			console.log(angle);
+			var next = HexMath.getPoint(point[0], point[1], radius, angle + 180);
+			ctx.lineTo(next[0], next[1]);
+		}
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	static drawRoad(vertices, vertex1, vertex2, fill, ctx) {
+		var point1 = vertices[vertex1];
+		var point2 = vertices[vertex2];
+		ctx.lineWidth = 10;
+		ctx.strokeStyle = "#" + BoardRenderer.fills[fill];
+		ctx.beginPath();
+		ctx.moveTo(point1[0], point1[1]);
+		ctx.lineTo(point2[0], point2[1]);
+		ctx.stroke();
+		ctx.lineWidth = 1;
 	}
 
 	static drawTile(vertices, row, column, fill, roll, ctx) {

@@ -9,10 +9,11 @@
 		</canvas>
 		<script src="catan_renderer.js"></script>
 		<script type="text/javascript">
-			var vertices = HexMath.getVertexPositions(100, 10);
+			// 0/6 7/15 16/26 27/37 38/46 47/53
+			var vertices = HexMath.getVertexPositions(100, 60);
 			var canvas = document.getElementById("board");
 			var ctx = canvas.getContext('2d');
-			ctx.fillStyle = "#09a0db";
+			ctx.fillStyle = "#" + BoardRenderer.fills.sea;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			// static drawTile(vertices, row, column, fill, roll) {
 			BoardRenderer.drawTile(vertices, 0, 0, "mountains", 10, ctx);
@@ -34,6 +35,27 @@
 			BoardRenderer.drawTile(vertices, 4, 0, "hills", 5, ctx);
 			BoardRenderer.drawTile(vertices, 4, 1, "fields", 6, ctx);
 			BoardRenderer.drawTile(vertices, 4, 2, "pasture", 11, ctx);
+			// static drawRoad(vertices, vertex1, vertex2, fill, ctx)
+			BoardRenderer.drawRoad(vertices, 12, 4, "orange", ctx);
+			BoardRenderer.drawRoad(vertices, 10, 11, "red", ctx);
+			BoardRenderer.drawRoad(vertices, 13, 12, "orange", ctx);
+			BoardRenderer.drawRoad(vertices, 19, 18, "white", ctx);
+			BoardRenderer.drawRoad(vertices, 29, 30, "red", ctx);
+			BoardRenderer.drawRoad(vertices, 35, 24, "white", ctx);
+			BoardRenderer.drawRoad(vertices, 40, 41, "blue", ctx);
+			BoardRenderer.drawRoad(vertices, 42, 43, "orange", ctx);
+			BoardRenderer.drawRoad(vertices, 44, 34, "blue", ctx);
+			// static drawSettlement(vertices, vertex, fill, ctx)
+			BoardRenderer.drawSettlement(vertices, 10, "red", ctx);
+			BoardRenderer.drawSettlement(vertices, 13, "orange", ctx);
+			BoardRenderer.drawSettlement(vertices, 19, "white", ctx);
+			BoardRenderer.drawSettlement(vertices, 29, "red", ctx);
+			BoardRenderer.drawSettlement(vertices, 35, "white", ctx);
+			BoardRenderer.drawSettlement(vertices, 40, "blue", ctx);
+			BoardRenderer.drawSettlement(vertices, 42, "orange", ctx);
+			BoardRenderer.drawSettlement(vertices, 44, "blue", ctx);
+			// static drawCity(vertices, vertex, fill, ctx)
+			BoardRenderer.drawCity(vertices, 4, "orange", ctx);
 		</script>
 	</body>
 </html>
