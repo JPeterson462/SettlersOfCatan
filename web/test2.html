@@ -5,12 +5,16 @@
 		<meta charset="utf-8" />
 	</head>
 	<body>
-		<canvas id="board" width="810" height="760">			
+		<canvas id="board" width="864" height="810">			
 		</canvas>
 		<script src="catan_renderer.js"></script>
 		<script type="text/javascript">
+		/*
+			Offset of (48, 0)
+			Board of hexes is 694x640
+		*/
 			// 0/6 7/15 16/26 27/37 38/46 47/53
-			var vertices = HexMath.getVertexPositions(80, 60);
+			var vertices = HexMath.getVertexPositions(48 + 85, 0 + 85);
 			var canvas = document.getElementById("board");
 			var ctx = canvas.getContext('2d');
 			ctx.fillStyle = "#" + BoardRenderer.fills.sea;
@@ -68,6 +72,8 @@
 			BoardRenderer.drawCity(vertices, 4, "orange", ctx);
 			// static drawRobber(vertices, row, column, ctx)
 			BoardRenderer.drawRobber(vertices, 2, 2, ctx);
+
+			ClickManager.addClickableAreas(vertices);
 		</script>
 	</body>
 </html>

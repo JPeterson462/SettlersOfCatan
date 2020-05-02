@@ -101,6 +101,23 @@ class HexMath {
 
 }
 
+class ClickManager {
+
+	static getSettlementCityBounds(vertices, vertex) {
+		var point = vertices[vertex];
+		return Math.round(point[0]) + "," + Math.round(point[1]) + "," + HexMath.SETTLEMENT_RADIUS;
+	}
+
+	static addClickableAreas(vertices) {
+		var area = document.createElement("area");
+		area.setAttribute("shape", "circle");
+		area.setAttribute("coords", ClickManager.getSettlementCityBounds(vertices, 0));
+		area.setAttribute("href", "#0");
+		document.getElementById("board").appendChild(area);
+	}
+
+}
+
 class BoardRenderer {
 
 	// 0/6 7/15 16/26 27/37 38/46 47/53
