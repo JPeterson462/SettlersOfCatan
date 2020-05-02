@@ -16,6 +16,8 @@ class HexMath {
 	static SETTLEMENT_RADIUS = 12;
 	static CITY_RADIUS = 20;
 
+	static ROBBER_SIZE = HexMath.TILE_SIZE / 4;
+
 	//     3
 	//   4   2
 	//   5   1
@@ -29,6 +31,10 @@ class HexMath {
 		angle = HexMath.toRadians(angle);
 		var point = [ centerx + Math.sin(angle) * radius, centery + Math.cos(angle) * radius ];
 		return point;
+	}
+
+	static flipPoint(centerx, centery, pointx, pointy, factor) {
+		return [ centerx + (centerx - pointx) * factor, centery + (centery - pointy) * factor];
 	}
 
 	static fillVertexPositions(positions, indices, angles, x, y, row, column) {
@@ -117,6 +123,8 @@ class BoardRenderer {
 		orange: "ffa500",
 		white: "fff",
 		blue: "00f",
+		robber: "000",
+		any: "fff"
 	};
 
 	static getCenterOfTile(vertices, indices) {
@@ -147,13 +155,38 @@ class BoardRenderer {
 		var start = HexMath.getPoint(point[0], point[1], radius, 180);
 		ctx.moveTo(start[0], start[1]);
 		for (var angle = 72; angle < 360; angle += 72) {
-			console.log(angle);
 			var next = HexMath.getPoint(point[0], point[1], radius, angle + 180);
 			ctx.lineTo(next[0], next[1]);
 		}
 		ctx.closePath();
 		ctx.fill();
 		ctx.stroke();
+	}
+
+	static drawHarbor(vertices, vertex1, neighbor1, vertex2, neighbor2, fill, ctx) {
+		// static flipPoint(centerx, centery, pointx, pointy)
+		var point1 = HexMath.flipPoint(vertices[vertex1][0], vertices[vertex1][1], vertices[neighbor1][0], vertices[neighbor1][1], 0.5);
+		var point2 = HexMath.flipPoint(vertices[vertex2][0], vertices[vertex2][1], vertices[neighbor2][0], vertices[neighbor2][1], 0.5);
+		var point3 = HexMath.flipPoint(vertices[vertex1][0], vertices[vertex1][1], vertices[neighbor1][0], vertices[neighbor1][1], 0.75);
+		var point4 = HexMath.flipPoint(vertices[vertex2][0], vertices[vertex2][1], vertices[neighbor2][0], vertices[neighbor2][1], 0.75);
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.beginPath();
+		ctx.moveTo(point1[0], point1[1]);
+		ctx.lineTo(point2[0], point2[1]);
+		ctx.lineTo(point4[0], point4[1]);
+		ctx.lineTo(point3[0], point3[1]);
+		ctx.closePath();
+		ctx.fill();
+	}
+
+	static drawRobber(vertices, row, column, ctx) {
+		var offsetsByRow = [ 0, 3, 7, 12, 16 ];
+		var tileIndicesForRow = BoardRenderer.tileIndices[offsetsByRow[row] + column];
+		var center = BoardRenderer.getCenterOfTile(vertices, tileIndicesForRow);
+		ctx.fillStyle = "#" + BoardRenderer.fills.robber;
+		ctx.beginPath();
+		ctx.arc(center[0], center[1], HexMath.ROBBER_SIZE / 2, 0, 2 * Math.PI, false);
+		ctx.fill();
 	}
 
 	static drawRoad(vertices, vertex1, vertex2, fill, ctx) {
@@ -193,7 +226,7 @@ class BoardRenderer {
 		ctx.textAlign = "center";
 		ctx.font = "32px Arial";
 		if (roll == 6 || roll == 8) {
-			ctx.fillStyle = "red";
+			ctx.fillStyle = "yellow";
 		} else {
 			ctx.fillStyle = "black";
 		}
