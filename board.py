@@ -89,7 +89,7 @@ class Board:
 		add_edge(7, 17)
 		add_edge(9, 19)
 		add_edge(11, 21)
-		add_edge(13, 13)
+		add_edge(13, 23)
 		add_edge(15, 25)
 		# row 3
 		add_vertex([c1])
