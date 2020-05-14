@@ -77,7 +77,7 @@ class HexMath {
 		var p2 = line1;
 		var l = HexMath.sub(p2, p1);
 		var p = HexMath.sub(point, p1);
-		if (doDebug) console.log("L: " + l + ", P: " + p);
+		//if (doDebug) console.log("L: " + l + ", P: " + p);
 		var xAxis = l;
 		var yAxis = [l[1], -l[0]];
 		if (yAxis[0] < 0 && yAxis[1] < 0) {
@@ -85,15 +85,15 @@ class HexMath {
 		}
 		var oldXAxis = [1, 0];
 		var oldYAxis = [0, 1];
-		if (doDebug) console.log("Axes: " + xAxis + ", " + yAxis);
+		//if (doDebug) console.log("Axes: " + xAxis + ", " + yAxis);
 		var changeOfCoordinates = HexMath.changeOfCoordinates(xAxis, yAxis);
 		changeOfCoordinates = HexMath.invert(changeOfCoordinates);
 		if (doDebug) console.log("Check: " + HexMath.transform(changeOfCoordinates, xAxis) + " === " + oldXAxis);
 		if (doDebug) console.log("Check: " + HexMath.transform(changeOfCoordinates, yAxis) + " === " + oldYAxis);
 		var pointInNewSpace = HexMath.transform(changeOfCoordinates, p);
-		if (doDebug) console.log(pointInNewSpace);
+		//if (doDebug) console.log(pointInNewSpace);
 		var lineLen = Math.ceil(Math.sqrt(l[0] * l[0] + l[1] * l[1]));
-		if (doDebug) console.log(lineLen);
+		//if (doDebug) console.log(lineLen);
 		var pointInNewSpaceScaled = HexMath.scale(pointInNewSpace, lineLen);
 		if (doDebug) console.log(pointInNewSpaceScaled);
 		return pointInNewSpaceScaled[0] > 0 && pointInNewSpaceScaled[0] < lineLen && Math.abs(pointInNewSpaceScaled[1]) < margin;
@@ -197,11 +197,40 @@ class ClickManager {
 		for (var i = 0; i < HexMath.edges.length; i++) {
 			ClickManager.clickableAreasLines.push([[vertices[HexMath.edges[i][0]], vertices[HexMath.edges[i][1]]], ["Edge", i]]);
 		}
+		// Tiles
+		var widths = [3, 4, 5, 4, 3];
+		var offsets = [0, 3, 7, 12, 16, 19];
+		for (var row = 0; row < 5; row++) {
+			for (var col = 0; col < widths[row]; col++) {
+				var tileIndices = BoardRenderer.tileIndices[offsets[row] + col];
+				var centerOfTile = BoardRenderer.getCenterOfTile(vertices, tileIndices);
+				ClickManager.clickableAreasRound.push([[centerOfTile[0], centerOfTile[1], (HexMath.TILE_WIDTH - HexMath.offsety) / 2], ["Tile", row, col]])
+			}
+		}
 	}
 
-	static processClick(event) {
+	static getCanvasCoordinates(e, canvas) {
+		// "How do I get the coordinates of a mouse click on a canvas element?"
+		// https://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+		var x;
+		var y;
+		if (e.pageX || e.pageY) { 
+		  x = e.pageX;
+		  y = e.pageY;
+		}
+		else { 
+		  x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+		  y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+		} 
+		x -= canvas.offsetLeft;
+		y -= canvas.offsetTop;
+		return [x, y];
+	}
+
+	static processClick(event, canvas) {
+		var matches = [];
 		// static closeToLine(line0, line1, point, margin)
-		var point = [event.clientX, event.clientY];
+		var point = ClickManager.getCanvasCoordinates(event, canvas);
 		for (var i = 0; i < ClickManager.clickableAreasRound.length; i++) {
 			var area = ClickManager.clickableAreasRound[i];
 			var bounds = area[0];
@@ -209,18 +238,18 @@ class ClickManager {
 			var dx = point[0] - bounds[0];
 			var dy = point[1] - bounds[1];
 			if (bounds[2] * bounds[2] > dx * dx + dy * dy) {
-				console.log("Clicked! " + tag);
+				matches.push(tag);
 			}
 		}
 		for (var i = 0; i < ClickManager.clickableAreasLines.length; i++) {
 			var area = ClickManager.clickableAreasLines[i];
 			var line = area[0];
 			var tag = area[1];
-			if (HexMath.closeToLine(line[0], line[1], point, HexMath.EDGE_RADIUS, tag[1] == 71)) {
-				console.log("Clicked! " + tag);//FIXME
+			if (HexMath.closeToLine(line[0], line[1], point, HexMath.EDGE_RADIUS, false)) {
+				matches.push(tag);
 			}
 		}
-
+		return matches;
 	}
 
 }

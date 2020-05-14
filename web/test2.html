@@ -76,7 +76,8 @@
 			ClickManager.addClickableAreas(vertices);
 
 			canvas.addEventListener('click', function (event) {
-				ClickManager.processClick(event);
+				var matches = ClickManager.processClick(event, canvas);
+				console.log(matches);
 			});
 		</script>
 	</body>
