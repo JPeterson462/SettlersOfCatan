@@ -15,7 +15,7 @@ class HexMath {
 
 	static SETTLEMENT_RADIUS = 12;
 	static CITY_RADIUS = 20;
-	static EDGE_RADIUS = 8;
+	static EDGE_RADIUS = 15;
 
 	static ROBBER_SIZE = HexMath.TILE_SIZE / 4;
 
@@ -41,29 +41,62 @@ class HexMath {
 		return a[0] * b[0] + a[1] * b[1];
 	}
 
+	static scale(a, f) {
+		return [a[0] * f, a[1] * f];
+	}
+
 	static project(b, a) {
 		var factor = HexMath.dot(a, b) / HexMath.dot(a, a);
 		return [a[0] * factor, a[1] * factor];
 	}
 
-	static closeToLine(line0, line1, point, margin) {
+	static changeOfCoordinates(newx, newy) {
+		return [[newx[0], newy[0]], [newx[1], newy[1]]];
+		//return [newx, newy];
+	}
+
+	static transform(matrix, point) {
+		return [point[0] * matrix[0][0] + point[1] * matrix[0][1], point[0] * matrix[1][0] + point[1] * matrix[1][1]];
+	}
+
+	static invert(matrix) {
+		var determinant = 1 / (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
+		return [[determinant * matrix[1][1], determinant * matrix[0][1] * -1], [determinant * matrix[1][0] * -1, determinant * matrix[0][0]]];
+	}
+
+	static closeToLine(line0, line1, point, margin, doDebug) {
+		/*
+			Uses the line as a coordinate system
+			Transforms the point from the identity basis to the line and its orthogonal complement
+			Can use margin and line length to determine click match
+		*/
+		if (doDebug) console.log("DEBUG: closeToLine(" + line0 + ", " + line1 + ", " + point + ", " + margin + ")");
 		// L =  P2 - P1
 		// P = P_ - P1
 		var p1 = line0;
 		var p2 = line1;
 		var l = HexMath.sub(p2, p1);
 		var p = HexMath.sub(point, p1);
-		var perp = HexMath.project(p, l);
-		var parallel = HexMath.sub(p, perp);
-		var perpLenSquared = HexMath.dot(perp, perp);
-		var parallelLenSquared = HexMath.dot(parallel, parallel);
-		var lineLenSquared = HexMath.dot(l, l);
-		if (parallel[0] >= 0 && parallel[1] >= 0 && parallelLenSquared <= lineLenSquared) {
-			if (perpLenSquared < margin * margin) {
-				return true;
-			}
+		if (doDebug) console.log("L: " + l + ", P: " + p);
+		var xAxis = l;
+		var yAxis = [l[1], -l[0]];
+		if (yAxis[0] < 0 && yAxis[1] < 0) {
+			yAxis = HexMath.scale(yAxis, -1);
 		}
-		return false;
+		var oldXAxis = [1, 0];
+		var oldYAxis = [0, 1];
+		if (doDebug) console.log("Axes: " + xAxis + ", " + yAxis);
+		var changeOfCoordinates = HexMath.changeOfCoordinates(xAxis, yAxis);
+		changeOfCoordinates = HexMath.invert(changeOfCoordinates);
+		if (doDebug) console.log("Check: " + HexMath.transform(changeOfCoordinates, xAxis) + " === " + oldXAxis);
+		if (doDebug) console.log("Check: " + HexMath.transform(changeOfCoordinates, yAxis) + " === " + oldYAxis);
+		var pointInNewSpace = HexMath.transform(changeOfCoordinates, p);
+		if (doDebug) console.log(pointInNewSpace);
+		var lineLen = Math.ceil(Math.sqrt(l[0] * l[0] + l[1] * l[1]));
+		if (doDebug) console.log(lineLen);
+		var pointInNewSpaceScaled = HexMath.scale(pointInNewSpace, lineLen);
+		if (doDebug) console.log(pointInNewSpaceScaled);
+		return pointInNewSpaceScaled[0] > 0 && pointInNewSpaceScaled[0] < lineLen && Math.abs(pointInNewSpaceScaled[1]) < margin;
 	}
 
 	static toRadians(degrees) {
@@ -183,7 +216,7 @@ class ClickManager {
 			var area = ClickManager.clickableAreasLines[i];
 			var line = area[0];
 			var tag = area[1];
-			if (HexMath.closeToLine(line[0], line[1], point, HexMath.EDGE_RADIUS)) {
+			if (HexMath.closeToLine(line[0], line[1], point, HexMath.EDGE_RADIUS, tag[1] == 71)) {
 				console.log("Clicked! " + tag);//FIXME
 			}
 		}
