@@ -9,9 +9,9 @@ class Tile {
 
 class HexMath {
 
-	static TILE_SIZE = 160;
+	static TILE_SIZE = 150;
 	static offsety = HexMath.TILE_SIZE / 2 * (1 - Math.cos(Math.PI / 6));
-	static TILE_WIDTH = 160 - HexMath.offsety * 2;
+	static TILE_WIDTH = HexMath.TILE_SIZE - HexMath.offsety * 2;
 
 	static SETTLEMENT_RADIUS = 12;
 	static CITY_RADIUS = 20;
@@ -123,6 +123,14 @@ class HexMath {
 			var angle = angles[i];
 			positions[index] = HexMath.getPoint(centerx, centery, HexMath.TILE_SIZE / 2, angle);
 		}
+	}
+
+	static getSideLength() {
+		var p1 = HexMath.getPoint(0, 0, HexMath.TILE_SIZE / 2, 0);
+		var p2 = HexMath.getPoint(0, 0, HexMath.TILE_SIZE / 2, 60);
+		var dx = p2[0] - p1[0];
+		var dy = p2[1] - p1[1];
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 	// 0/6 7/15 16/26 27/37 38/46 47/53
@@ -254,7 +262,50 @@ class ClickManager {
 
 }
 
+class HandRenderer {
+
+	static drawRoads(position, num, fill, ctx) {
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		for (var i = 0; i < num; i++) {
+			ctx.fillRect(position[0] + i * (BoardRenderer.roadWidth + 7), position[1], BoardRenderer.roadWidth, BoardRenderer.roadLength);
+		}
+	}
+
+	static drawSettlements(position, num, fill, ctx) {
+		ctx.strokeStyle = "#000";
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		for (var i = 0; i < num; i++) {
+			ctx.fillRect(position[0] + i * (HexMath.SETTLEMENT_RADIUS * 2 + 7), position[1], HexMath.SETTLEMENT_RADIUS * 2, HexMath.SETTLEMENT_RADIUS * 2);
+			ctx.strokeRect(position[0] + i * (HexMath.SETTLEMENT_RADIUS * 2 + 7), position[1], HexMath.SETTLEMENT_RADIUS * 2, HexMath.SETTLEMENT_RADIUS * 2);
+		}
+	}
+
+	static drawCities(position, num, fill, ctx) {
+		ctx.strokeStyle = "#000";
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		for (var i = 0; i < num; i++) {
+			var point = [position[0] + HexMath.CITY_RADIUS + i * (HexMath.CITY_RADIUS * 2 + 7), position[1] + HexMath.CITY_RADIUS];
+			var radius = HexMath.CITY_RADIUS;
+			ctx.beginPath();
+			var start = HexMath.getPoint(point[0], point[1], radius, 180);
+			ctx.moveTo(start[0], start[1]);
+			for (var angle = 72; angle < 360; angle += 72) {
+				var next = HexMath.getPoint(point[0], point[1], radius, angle + 180);
+				ctx.lineTo(next[0], next[1]);
+			}
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}	
+	}
+
+}
+
 class BoardRenderer {
+
+	static roadWidth = 10;
+
+	static roadLength = HexMath.getSideLength();
 
 	// 0/6 7/15 16/26 27/37 38/46 47/53
 	static tileIndices = 	[ [0, 1, 2, 10, 9, 8], [2, 3, 4, 12, 11, 10], [4, 5, 6, 14, 13, 12],
@@ -345,7 +396,7 @@ class BoardRenderer {
 	static drawRoad(vertices, vertex1, vertex2, fill, ctx) {
 		var point1 = vertices[vertex1];
 		var point2 = vertices[vertex2];
-		ctx.lineWidth = 10;
+		ctx.lineWidth = BoardRenderer.roadWidth;
 		ctx.strokeStyle = "#" + BoardRenderer.fills[fill];
 		ctx.beginPath();
 		ctx.moveTo(point1[0], point1[1]);
