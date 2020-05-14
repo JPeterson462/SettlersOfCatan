@@ -264,6 +264,11 @@ class ClickManager {
 
 class HandRenderer {
 
+	static AWARD_WIDTH = 120;
+	static AWARD_HEIGHT = 30;
+	static CARD_WIDTH = 120;
+	static CARD_HEIGHT = 30;
+
 	static drawRoads(position, num, fill, ctx) {
 		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
 		for (var i = 0; i < num; i++) {
@@ -297,6 +302,35 @@ class HandRenderer {
 			ctx.fill();
 			ctx.stroke();
 		}	
+	}
+
+	static drawRoadBuilding(position, fill, ctx) {
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.fillRect(position[0], position[1], HandRenderer.AWARD_WIDTH, HandRenderer.AWARD_HEIGHT);
+		ctx.fillStyle = "#000";
+		ctx.textAlign = "Center";
+		ctx.font = "16px Arial";
+		ctx.fillText("Longest Road", position[0] + 5 + 5, position[1] + 5 + 15);
+	}
+
+	static drawLargestArmy(position, fill, ctx) {
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.fillRect(position[0], position[1], HandRenderer.AWARD_WIDTH, HandRenderer.AWARD_HEIGHT);
+		ctx.fillStyle = "#000";
+		ctx.textAlign = "Center";
+		ctx.font = "16px Arial";
+		ctx.fillText("Largest Army", position[0] + 5 + 5, position[1] + 5 + 15);
+	}
+
+	static drawDevelopmentCards(position, types, fill, ctx) {
+		for (var i = 0; i < types.length; i++) {
+			ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+			ctx.fillRect(position[0], position[1] + i * (HandRenderer.CARD_HEIGHT + 7), HandRenderer.CARD_WIDTH, HandRenderer.CARD_HEIGHT);
+			ctx.fillStyle = "#000";
+			ctx.textAlign = "Center";
+			ctx.font = "16px Arial";
+			ctx.fillText(types[i], position[0] + 5 + 5, position[1] + 5 + 15 + i * (HandRenderer.CARD_HEIGHT + 7));
+		}
 	}
 
 }
