@@ -19,6 +19,11 @@
 			HandRenderer.drawRoadBuilding([10, 200], "desert", ctx);
 			HandRenderer.drawLargestArmy([10, 240], "desert", ctx);
 			HandRenderer.drawDevelopmentCards([10 + HandRenderer.AWARD_WIDTH + 10, 200], ["Year of Plenty", "Monopoly", "Knight"], "fields", ctx);
+			HandClickManager.registerRegions([10, 10, 15 * (5 + BoardRenderer.roadWidth), BoardRenderer.roadLength], [10, 100, 5 * (5 + HexMath.SETTLEMENT_RADIUS * 2), HexMath.SETTLEMENT_RADIUS * 2], [10, 140, 4 * (5 + HexMath.CITY_RADIUS * 2), HexMath.CITY_RADIUS * 2], [10 + HandRenderer.AWARD_WIDTH + 10, 200, HandRenderer.CARD_WIDTH, 8 * (HandRenderer.CARD_HEIGHT + 5), HandRenderer.CARD_HEIGHT + 5]);
+			canvas.addEventListener('click', function (event) {
+				var matches = HandClickManager.processClick(event, canvas);
+				console.log(matches);
+			});
 		</script>
 	</body>
 </html>

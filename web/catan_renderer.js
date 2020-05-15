@@ -185,6 +185,41 @@ class HexMath {
 
 }
 
+class HandClickManager {
+
+	static genericBounds = [];
+	static cardBounds = [];
+
+	static registerRegions(roadBounds, settlementBounds, cityBounds, cardBounds) {
+		HandClickManager.genericBounds.push([roadBounds, ["Road"]]);
+		HandClickManager.genericBounds.push([settlementBounds, ["Settlement"]]);
+		HandClickManager.genericBounds.push([cityBounds, ["City"]]);
+		HandClickManager.cardBounds = cardBounds;
+	}
+
+	static processClick(event, canvas) {
+		var matches = [];
+		var point = ClickManager.getCanvasCoordinates(event, canvas);
+		for (var i = 0; i < HandClickManager.genericBounds.length; i++) {
+			var bounds = HandClickManager.genericBounds[i][0];
+			var tag = HandClickManager.genericBounds[i][1];
+			console.log(bounds + " " + tag);
+			if (point[0] >= bounds[0] && point[1] >= bounds[1] && point[0] <= bounds[0] + bounds[2] && point[1] <= bounds[1] + bounds[3]) {
+				matches.push(tag);
+			}
+		}
+		var bounds = HandClickManager.cardBounds;
+		if (point[0] >= bounds[0] && point[1] >= bounds[1] && point[0] <= bounds[0] + bounds[2] && point[1] <= bounds[1] + bounds[3]) {
+			var size = bounds[4];
+			var offset = point[1] - bounds[1];
+			var index = offset / size;
+			matches.push(["DevelopmentCard", Math.floor(index)]);
+		}
+		return matches;
+	}
+
+}
+
 class ClickManager {
 
 	static clickableAreasRound = [];
