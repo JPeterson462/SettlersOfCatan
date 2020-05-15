@@ -557,4 +557,31 @@ class BoardRenderer {
 		}
 	}
 
+	static harborPositions = [[0, 8, 1, 2], [3, 2, 4, 12], [14, 13, 15, 25], [26, 25, 37, 36], [46, 36, 45, 44], [51, 43, 50, 49], [48, 49, 47, 39], [38, 39, 28, 29], [17, 18, 7, 8]];
+
+	static drawState(vertices, harborTypes, tiles, roads, settlements, robber, ctx) {
+		for (var i = 0; i < harborTypes.length; i++) {
+			BoardRenderer.drawHarbor(vertices, BoardRenderer.harborPositions[i][0], BoardRenderer.harborPositions[i][1], BoardRenderer.harborPositions[i][2], BoardRenderer.harborPositions[i][3], harborTypes[i], ctx);
+		}
+		var rowOffsets = [0, 3, 7, 12, 16, 19];
+		var rowLen = [3, 4, 5, 4, 3];
+		for (var row = 0; row < 5; row++) {
+			for (var col = 0; col < rowLen[row]; col++) {
+				var index = rowOffsets[row] + col;
+				BoardRenderer.drawTile(vertices, row, col, tiles[index][0], tiles[index][1], ctx);
+			}
+		}
+		for (var i = 0; i < roads.length; i++) {
+			BoardRenderer.drawRoad(vertices, roads[i][0], roads[i][1], roads[i][2], ctx);
+		}
+		for (var i = 0; i < settlements.length; i++) {
+			if (settlements[i][2]) {
+				BoardRenderer.drawCity(vertices, settlements[i][0], settlements[i][1], ctx);
+			} else {
+				BoardRenderer.drawSettlement(vertices, settlements[i][0], settlements[i][1], ctx);
+			}
+		}
+		BoardRenderer.drawRobber(vertices, robber[0], robber[1], ctx);
+	}
+
 }
