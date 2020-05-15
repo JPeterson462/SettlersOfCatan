@@ -262,6 +262,47 @@ class ClickManager {
 
 }
 
+class OtherPlayersRenderer {
+
+	static PLAYER_WIDTH = 200;
+	static PLAYER_HEIGHT = 95;
+
+	static drawPlayer(position, profile, username, vp, hasLongestRoad, hasLargestArmy, fill, ctx) {
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill];
+		ctx.fillRect(position[0], position[1], OtherPlayersRenderer.PLAYER_WIDTH, OtherPlayersRenderer.PLAYER_HEIGHT);
+		var img = new Image();
+		img.onload = function() {
+			ctx.drawImage(img, position[0] + 5, position[1] + 5, OtherPlayersRenderer.PLAYER_HEIGHT - 10, OtherPlayersRenderer.PLAYER_HEIGHT - 10);
+		};
+		img.src = profile;
+		var both = hasLargestArmy && hasLongestRoad;
+		var roadOffset = both ? (30 + 5) : 0;
+		if (hasLargestArmy) {
+			ctx.fillStyle = "#" + BoardRenderer.fills["desert"];
+			ctx.fillRect(position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5, position[1] + 16 + 5 + 5, 30, 30);
+			ctx.fillStyle = "#000";
+			ctx.font = "bold 26px Arial";
+			ctx.textAlign = "Center";
+			ctx.fillText("A", position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5 + 5, position[1] + 16 + 5 + 5 + 26)	
+		}
+		if (hasLongestRoad) {
+			ctx.fillStyle = "#" + BoardRenderer.fills["desert"];
+			ctx.fillRect(position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5 + roadOffset, position[1] + 16 + 5 + 5, 30, 30);	
+			ctx.fillStyle = "#000";
+			ctx.font = "bold 26px Arial";
+			ctx.textAlign = "Center";
+			ctx.fillText("R", position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5 + roadOffset + 5, position[1] + 16 + 5 + 5 + 26)
+		}
+		ctx.fillStyle = "#" + BoardRenderer.fills[fill + "_contrast"];
+		ctx.font = "bold 16px Arial";
+		ctx.textAlign = "Left";
+		ctx.fillText(username, position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5, position[1] + 16 + 5);
+		ctx.font = "bold 32px Arial";
+		ctx.fillText("" + vp, position[0] + OtherPlayersRenderer.PLAYER_HEIGHT + 5 + 5, position[1] + 5 + OtherPlayersRenderer.PLAYER_HEIGHT - 12);
+	}
+
+}
+
 class HandRenderer {
 
 	static AWARD_WIDTH = 120;
@@ -358,9 +399,13 @@ class BoardRenderer {
 		fields: "e2f511",
 		sea: "09a0db",
 		red: "f00",
+		red_contrast: "0ff",
 		orange: "ffa500",
+		orange_contrast: "005aff",
 		white: "fff",
+		white_contrast: "000",
 		blue: "00f",
+		blue_contrast: "ff0",
 		robber: "000",
 		any: "fff"
 	};

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Catan Board Canvas 3</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<canvas id="hand_canvas" width="415" height="205" style="border: 1px solid black">			
+		</canvas>
+		<script src="catan_renderer.js"></script>
+		<script type="text/javascript">
+			var canvas = document.getElementById("hand_canvas");
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = "#" + BoardRenderer.fills.sea;
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			OtherPlayersRenderer.drawPlayer([5, 5], 
+				"https://www.google.com/favicon.ico", "Username", 9, true, false, "orange", ctx);
+			OtherPlayersRenderer.drawPlayer([5 + 5 + OtherPlayersRenderer.PLAYER_WIDTH, 5], 
+				"https://www.google.com/favicon.ico", "Username", 6, false, true, "red", ctx);
+			OtherPlayersRenderer.drawPlayer([5, 5 + 5 + OtherPlayersRenderer.PLAYER_HEIGHT], 
+				"https://www.google.com/favicon.ico", "Username", 7, true, true, "blue", ctx);
+			OtherPlayersRenderer.drawPlayer([5 + 5 + OtherPlayersRenderer.PLAYER_WIDTH, 5 + 5 + OtherPlayersRenderer.PLAYER_HEIGHT], 
+				"https://www.google.com/favicon.ico", "Username", 3, false, false, "white", ctx);
+		</script>
+	</body>
+</html>
