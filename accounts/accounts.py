@@ -1,7 +1,9 @@
+# Path hack.
+import sys, os
+sys.path.insert(0, os.path.abspath('..'))
+
 import socketserver
-import re
-import urllib
-import urllib.parse
+from pyparsing.parsing import PyParsing
 
 class AccountRequestProcessor(socketserver.BaseRequestHandler):
     """
@@ -13,36 +15,14 @@ class AccountRequestProcessor(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        filter = 'GET \/\?([^ ]+)'
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
         #print("{} wrote:".format(self.client_address[0]))
-        m = re.search(filter, self.data.decode("utf-8"))
-        if m:
-            found = m.group(1)
-            content = urllib.parse.parse_qs(found)
-            callback = content['callback'][0]
-            token = content['_'][0]
-            data = dict()
-            for key, value in content.items():
-                layers = key.replace("]", "").split("[")
-                if layers[0] != "callback" and layers[0] != "_":
-                    current = data
-                    for layer in layers:
-                        if not layer in current.keys():
-                            current[layer] = dict()
-                        current = current[layer]
-                    current = data
-                    i = 0
-                    while i < len(layers) - 1:
-                        current = current[layers[i]]
-                        i += 1
-                    current[layers[i]] = value
-            print("Callback: " + callback)
-            print("Token: " + token)
-            print("Data: " + str(data))
-            print(content)
-            # just send back the same data, but upper-cased
+        data_as_string = self.data.decode("utf-8")
+        callback, token, data = PyParsing.parseMessageFromClient(data_as_string)
+        # just send back the same data, but upper-cased
+        if token != None:
+            print(str(data))
             self.request.sendall("{response: 'test'}".encode('utf-8'))
 
 if __name__ == "__main__":

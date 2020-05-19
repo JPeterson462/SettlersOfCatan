@@ -31,7 +31,7 @@
     $.ajax({
         url: "http://localhost:9999",
         type: "POST",
-        data: { information : { note: "You have a very nice website, sir.", about: 10, object: { test: 'test1', test2: 4 } } },
+        data: { information : { note: "You have a very nice website, sir.", about: 10, object: { test: ['test1', 'about'], test2: [4, 10] } } },
         dataType: "jsonp",
         success: function(data) {
             console.log(data);
